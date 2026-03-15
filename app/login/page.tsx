@@ -47,9 +47,9 @@ export default function LoginPage() {
       <div className="glass-card animate-fade-in" style={{ width: '100%', maxWidth: '400px' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.5rem', background: 'linear-gradient(to right, #6366f1, #10b981)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            Farmer Portal
+            Farmer Final Payment
           </h1>
-          <p style={{ color: 'var(--text-muted)' }}>Sign in to view farmer details securely</p>
+          <p style={{ color: 'var(--text-muted)' }}>Zone Office - Field Officer Access Port</p>
         </div>
 
         {error && (
