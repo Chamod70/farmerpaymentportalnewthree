@@ -337,7 +337,6 @@ Banked Date: ${row.bankedDate}
         </div>
       </main>
       {/* Footer */}
-            // update
       <footer style={{ padding: '1rem', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
         <p style={{ fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center', margin: 0 }}>
           Click rows to expand details.
