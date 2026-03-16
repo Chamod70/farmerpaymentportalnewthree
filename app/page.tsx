@@ -96,8 +96,9 @@ Banked Date: ${row.bankedDate}
   };
 
   return (
-    <div style={{ padding: '1rem', maxWidth: '1200px', margin: '0 auto', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100dvh', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       
+      <div style={{ padding: '1rem 1rem 0 1rem', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
       {/* Header Section */}
       <header style={{ 
         display: 'flex', 
@@ -124,10 +125,11 @@ Banked Date: ${row.bankedDate}
           Logout
         </button>
       </header>
+    </div>
 
       {/* Main Content */}
-      <main className="animate-fade-in" style={{ animationDelay: '0.1s', flex: 1 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+      <main className="animate-fade-in" style={{ animationDelay: '0.1s', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '0 1rem 1rem 1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', flexShrink: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
             <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Farmer Records</h2>
             <div style={{ 
@@ -193,6 +195,8 @@ Banked Date: ${row.bankedDate}
             )}
           </div>
         </div>
+
+        <div style={{ flex: 1, overflowY: 'auto', paddingRight: '2px', paddingBottom: '2rem' }} className="custom-scrollbar">
 
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
@@ -330,11 +334,12 @@ Banked Date: ${row.bankedDate}
             </table>
           </div>
         )}
+        </div>
       </main>
       
       {/* Footer */}
-      <footer style={{ marginTop: '2rem', padding: '1rem', borderTop: '1px solid var(--border)' }}>
-        <p style={{ fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center' }}>
+      <footer style={{ padding: '1rem', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
+        <p style={{ fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center', margin: 0 }}>
           Click rows to expand details.
         </p>
       </footer>
