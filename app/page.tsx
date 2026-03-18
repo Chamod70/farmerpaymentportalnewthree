@@ -167,13 +167,15 @@ Banked Date: ${row.bankedDate}
 
           {/* Last Banked Info Live Animation */}
           {lastBankedInfo && (
-            <div className="animate-slide-up" style={{ marginBottom: '0.25rem' }}>
+            <div className="animate-slide-up" style={{ marginBottom: '0.4rem' }}>
               <div className="live-badge" style={{ 
-                minHeight: '44px',
+                minHeight: '38px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.8rem',
-                flexWrap: 'wrap'
+                gap: '0.6rem',
+                flexWrap: 'nowrap',
+                padding: '0.4rem 0.8rem',
+                overflow: 'hidden'
               }}>
                 <div className="live-dot-container" style={{ flexShrink: 0 }}>
                   <div className="live-dot-pulse"></div>
@@ -182,19 +184,35 @@ Banked Date: ${row.bankedDate}
                 
                 <div style={{ 
                   display: 'flex', 
-                  gap: '0.4rem 1.2rem', 
-                  flexWrap: 'wrap',
+                  gap: '0.8rem', 
+                  flexWrap: 'nowrap',
                   alignItems: 'center',
-                  fontSize: '0.85rem', // Consistent font size
-                  lineHeight: '1.2'
+                  fontSize: '0.72rem',
+                  lineHeight: '1',
+                  whiteSpace: 'nowrap'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                    <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Last Banked List:</span>
-                    <span style={{ color: '#818cf8', fontWeight: 600 }}>{lastBankedInfo.listNo}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Last Banked:</span>
+                    <span style={{ 
+                      background: 'rgba(129, 140, 248, 0.15)', 
+                      color: '#a5b4fc', 
+                      padding: '0.2rem 0.4rem', 
+                      borderRadius: '4px',
+                      fontWeight: 700,
+                      border: '1px solid rgba(129, 140, 248, 0.2)'
+                    }}>{lastBankedInfo.listNo}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                    <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Bank Date:</span>
-                    <span style={{ color: '#10b981', fontWeight: 600 }}>{lastBankedInfo.bankedDate}</span>
+                  <div style={{ width: '1px', height: '10px', background: 'rgba(255,255,255,0.1)' }}></div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Date:</span>
+                    <span style={{ 
+                      background: 'rgba(16, 185, 129, 0.15)', 
+                      color: '#34d399', 
+                      padding: '0.2rem 0.4rem', 
+                      borderRadius: '4px',
+                      fontWeight: 700,
+                      border: '1px solid rgba(16, 185, 129, 0.2)'
+                    }}>{lastBankedInfo.bankedDate}</span>
                   </div>
                 </div>
               </div>
