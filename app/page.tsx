@@ -168,20 +168,33 @@ Banked Date: ${row.bankedDate}
           {/* Last Banked Info Live Animation */}
           {lastBankedInfo && (
             <div className="animate-slide-up" style={{ marginBottom: '0.25rem' }}>
-              <div className="live-badge">
-                <div className="live-dot-container">
+              <div className="live-badge" style={{ 
+                minHeight: '44px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.8rem',
+                flexWrap: 'wrap'
+              }}>
+                <div className="live-dot-container" style={{ flexShrink: 0 }}>
                   <div className="live-dot-pulse"></div>
                   <div className="live-dot"></div>
                 </div>
-                <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 500 }}>Last Banked List:</span>
-                    <span style={{ color: '#818cf8', letterSpacing: '0.02em' }}>{lastBankedInfo.listNo}</span>
+                
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '0.4rem 1.2rem', 
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  fontSize: '0.85rem', // Consistent font size
+                  lineHeight: '1.2'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Last Banked List:</span>
+                    <span style={{ color: '#818cf8', fontWeight: 600 }}>{lastBankedInfo.listNo}</span>
                   </div>
-                  <div style={{ width: '1px', height: '12px', background: 'rgba(255,255,255,0.1)', alignSelf: 'center' }}></div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 500 }}>Bank Date:</span>
-                    <span style={{ color: '#10b981' }}>{lastBankedInfo.bankedDate}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Bank Date:</span>
+                    <span style={{ color: '#10b981', fontWeight: 600 }}>{lastBankedInfo.bankedDate}</span>
                   </div>
                 </div>
               </div>
