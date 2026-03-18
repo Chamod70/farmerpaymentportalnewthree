@@ -91,6 +91,22 @@ Banked Date: ${row.bankedDate}
     );
   }, [data, searchTerm]);
 
+  const lastBankedInfo = useMemo(() => {
+    // Look for records that have an actual banked date (not pending/placeholder)
+    const validEntries = [...data].filter(item => {
+      const date = (item.bankedDate || '').toLowerCase().trim();
+      return date !== '' && 
+             date !== 'pending' && 
+             date !== '-' && 
+             date !== 'nill' && 
+             date !== 'minus' &&
+             date !== 'null';
+    });
+    
+    // Return the last one in the list (assuming chronological order in the sheet)
+    return validEntries.length > 0 ? validEntries[validEntries.length - 1] : null;
+  }, [data]);
+
   const toggleExpand = (plotNo: string) => {
     setExpandedPlot(expandedPlot === plotNo ? null : plotNo);
   };
@@ -148,6 +164,29 @@ Banked Date: ${row.bankedDate}
               Read-Only
             </div>
           </div>
+
+          {/* Last Banked Info Live Animation */}
+          {lastBankedInfo && (
+            <div className="animate-slide-up" style={{ marginBottom: '0.25rem' }}>
+              <div className="live-badge">
+                <div className="live-dot-container">
+                  <div className="live-dot-pulse"></div>
+                  <div className="live-dot"></div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 500 }}>Last Banked List:</span>
+                    <span style={{ color: '#818cf8', letterSpacing: '0.02em' }}>{lastBankedInfo.listNo}</span>
+                  </div>
+                  <div style={{ width: '1px', height: '12px', background: 'rgba(255,255,255,0.1)', alignSelf: 'center' }}></div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 500 }}>Bank Date:</span>
+                    <span style={{ color: '#10b981' }}>{lastBankedInfo.bankedDate}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Search Bar */}
           <div className="glass" style={{ padding: '0.25rem', borderRadius: '12px', display: 'flex', alignItems: 'center', position: 'relative' }}>
