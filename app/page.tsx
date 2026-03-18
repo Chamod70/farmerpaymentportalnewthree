@@ -114,29 +114,29 @@ Banked Date: ${row.bankedDate}
   return (
     <div style={{ height: '100dvh', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       
-      <div style={{ padding: '1rem 1rem 0 1rem', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+      <div style={{ padding: '0.75rem 1rem 0 1rem', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
       {/* Header Section */}
       <header style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
-        marginBottom: '1.5rem',
-        paddingBottom: '1rem',
+        marginBottom: '0.75rem',
+        paddingBottom: '0.5rem',
         borderBottom: '1px solid var(--border)',
         flexWrap: 'wrap',
-        gap: '1rem'
+        gap: '0.75rem'
       }} className="animate-fade-in">
         <div style={{ minWidth: '200px', flex: 1 }}>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0, background: 'linear-gradient(to right, #6366f1, #10b981)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             Farmer Final Payment 2026-SC
           </h1>
-          <p style={{ color: 'var(--text-muted)', marginTop: '0.25rem' }}>Zone Office - Field Officer Access Port</p>
+          <p style={{ color: 'var(--text-muted)', marginTop: '0.15rem', fontSize: '0.85rem' }}>Zone Office - Field Officer Access Port</p>
         </div>
         
         <button 
           onClick={handleLogout} 
           className="btn" 
-          style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)' }}
+          style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.5rem 1rem' }}
         >
           Logout
         </button>
@@ -144,8 +144,8 @@ Banked Date: ${row.bankedDate}
     </div>
 
       {/* Main Content */}
-      <main className="animate-fade-in" style={{ animationDelay: '0.1s', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '0 1rem 1rem 1rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', flexShrink: 0 }}>
+      <main className="animate-fade-in" style={{ animationDelay: '0.1s', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '0 1rem 0.5rem 1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1rem', flexShrink: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
             <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Farmer Records</h2>
             <div style={{ 
