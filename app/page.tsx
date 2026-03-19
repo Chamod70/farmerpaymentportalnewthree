@@ -85,21 +85,29 @@ Banked Date: ${row.bankedDate}
   };
 
   const filteredData = useMemo(() => {
-    return data.filter(item => 
-      item.plotNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.farmerName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    return data.filter(item => {
+      const isValidPlot = item.plotNo && item.plotNo.trim() !== '' && item.plotNo !== '-';
+      if (!isValidPlot) return false;
+      
+      const sc = searchTerm.toLowerCase();
+      return item.plotNo.toLowerCase().includes(sc) ||
+             item.farmerName.toLowerCase().includes(sc);
+    });
   }, [data, searchTerm]);
 
   const lastBankedInfo = useMemo(() => {
     // Look for records that have an actual banked date (not pending/placeholder)
     const validEntries = [...data].filter(item => {
+      const isValidPlot = item.plotNo && item.plotNo.trim() !== '' && item.plotNo !== '-';
+      if (!isValidPlot) return false;
+
       const date = (item.bankedDate || '').toLowerCase().trim();
       return date !== '' && 
              date !== 'pending' && 
              date !== '-' && 
              date !== 'nill' && 
              date !== 'minus' &&
+             date !== 'cheque' &&
              date !== 'null';
     });
     
