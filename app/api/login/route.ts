@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 // In a real application, connect this to a Database.
 // For now, hardcoded valid users here.
 const VALID_USERS = {
-  admin: "admin123",
+  admin: "zone123",
   farmer1: "pass123",
   manager: "password"
 };
@@ -11,7 +11,7 @@ const VALID_USERS = {
 export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
-    const secretPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const secretPassword = process.env.ADMIN_PASSWORD || 'zone123';
 
     if (username === 'admin' && password === secretPassword) {
       const response = NextResponse.json({ success: true });

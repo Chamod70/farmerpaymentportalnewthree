@@ -130,6 +130,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  table-layout: fixed;
 }
 
 .data-table th {
@@ -300,4 +301,101 @@ body {
 
 .animate-slide-up {
   animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Detail Cards */
+.detail-card {
+  padding: 1.1rem 1rem;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-card:hover {
+  transform: translateY(-3px) scale(1.02);
+  filter: brightness(1.15);
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.4);
+}
+
+.detail-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(225deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.detail-card:hover::after {
+  opacity: 1;
+}
+
+/* Table Row Active */
+.row-active td {
+  background: rgba(99, 102, 241, 0.08) !important;
+  color: white !important;
+}
+
+.search-container:focus-within {
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), 0 10px 30px -10px rgba(0, 0, 0, 0.5) !important;
+  background: rgba(30, 41, 59, 0.5) !important;
+}
+
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.detail-expansion-container {
+  padding: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .detail-expansion-container {
+    padding: 1rem 1.25rem !important;
+  }
+
+  .details-grid {
+    gap: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    max-width: 320px !important;
+  }
+  
+  .detail-card {
+    padding: 0.6rem 0.5rem !important;
+    border-radius: 10px !important;
+    gap: 0.2rem !important;
+  }
+
+  .detail-card span {
+    font-size: 0.5rem !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .detail-card div:last-child {
+    font-size: 0.75rem !important;
+  }
+
+  .detail-card div:first-child gap {
+    gap: 0.3rem !important;
+  }
 }

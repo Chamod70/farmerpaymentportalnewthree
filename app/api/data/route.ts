@@ -43,6 +43,8 @@ export async function GET() {
       balanceAmount: row[headers[3]] || '-',
       listNo: row[headers[4]] || '-',
       bankedDate: row[headers[5]] || '-',
+      bankAccNo: row[headers[6]] || '-',
+      bankCode: row[headers[7]] || '-',
     }));
 
     return NextResponse.json({ success: true, data: formattedData });
