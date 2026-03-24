@@ -141,7 +141,7 @@ Banked Date: ${row.bankedDate}
 
   const lastBankedInfo = useMemo(() => {
     // Look for records that have an actual banked date (not pending/placeholder)
-    const validEntries = [...data].filter(item => {
+    const validEntries = data.filter(item => {
       const isValidPlot = item.plotNo && item.plotNo.trim() !== '' && item.plotNo !== '-';
       if (!isValidPlot) return false;
 
@@ -152,11 +152,27 @@ Banked Date: ${row.bankedDate}
              date !== 'nill' && 
              date !== 'minus' &&
              date !== 'cheque' &&
-             date !== 'null';
+             date !== 'null' &&
+             date !== '1899-12-30';
     });
     
-    // Return the last one in the list (assuming chronological order in the sheet)
-    return validEntries.length > 0 ? validEntries[validEntries.length - 1] : null;
+    if (validEntries.length === 0) return null;
+
+    // Sort to find the latest one chronologically
+    const sorted = [...validEntries].sort((a, b) => {
+      // Primary sort by date string (YYYY-MM-DD)
+      const dateCompare = (a.bankedDate || '').localeCompare(b.bankedDate || '');
+      if (dateCompare !== 0) return dateCompare;
+      
+      // Secondary sort by List No (numeric part)
+      const getNum = (s: string) => {
+        const match = s.match(/\d+/);
+        return match ? parseInt(match[0]) : 0;
+      };
+      return getNum(a.listNo || '') - getNum(b.listNo || '');
+    });
+    
+    return sorted[sorted.length - 1];
   }, [data]);
 
   const toggleExpand = (plotNo: string) => {
