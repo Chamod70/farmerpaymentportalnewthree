@@ -106,7 +106,7 @@ export default function LoginPage() {
 
         <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
           <p>Demo accounts:</p>
-          <p>User: <strong>admin</strong> | Pass: <strong>admin123</strong></p>
+          <p>User: <strong>admin</strong> | Pass: <strong>zone123</strong></p>
           <p>User: <strong>farmer1</strong> | Pass: <strong>pass123</strong></p>
         </div>
       </div>

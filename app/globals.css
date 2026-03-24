@@ -142,6 +142,8 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 10;
 }
 
 .data-table td {
@@ -196,11 +198,35 @@ body {
   }
 
   h1 {
-    font-size: 1.5rem !important;
+    font-size: 1.2rem !important;
+    line-height: 1.1 !important;
   }
 
   p {
     font-size: 0.85rem !important;
+  }
+
+  .page-header {
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+  }
+
+  .page-header h1 {
+    font-size: 1.1rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .menu-btn {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.8rem !important;
+    gap: 0.3rem !important;
+  }
+
+  .menu-btn svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   .data-table th, .data-table td {
@@ -398,4 +424,124 @@ body {
   .detail-card div:first-child gap {
     gap: 0.3rem !important;
   }
+}
+
+/* Dropdown Menu Styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  z-index: 10001; /* Extra layer for the dropdown itself */
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #1e293b; /* Solid background */
+  min-width: 220px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+  z-index: 99999 !important; /* Extremely high z-index */
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  margin-top: 0.5rem;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+.dropdown-content.show {
+  display: block;
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+}
+
+.dropdown-submenu {
+  max-height: 250px;
+  overflow-y: auto;
+  background: #111827; /* Darker, clearly distinguished submenu background */
+}
+
+.submenu-item {
+  padding: 1rem 1.75rem;
+  font-size: 0.9rem;
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.submenu-item:hover {
+  background: #1f2937;
+  color: #818cf8;
+}
+
+.active-filter {
+  background: rgba(99, 102, 241, 0.15) !important;
+  color: #a5b4fc !important;
+  font-weight: 800 !important;
+}
+
+@media (max-width: 640px) {
+  .dropdown-content {
+    right: -10px;
+    width: calc(100vw - 40px);
+    max-width: 280px;
+  }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }

@@ -21,11 +21,35 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedPlot, setExpandedPlot] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
+  const [selectedListNo, setSelectedListNo] = useState<string | null>(null);
+  const [isListExpanded, setIsListExpanded] = useState(false);
+  const [listSearchTerm, setListSearchTerm] = useState('');
   const router = useRouter();
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.dropdown')) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   const fetchData = async () => {
     try {
@@ -93,11 +117,27 @@ Banked Date: ${row.bankedDate}
       const isValidPlot = item.plotNo && item.plotNo.trim() !== '' && item.plotNo !== '-';
       if (!isValidPlot) return false;
       
+      // Filter by List No if selected (with trimming for robustness)
+      if (selectedListNo && (item.listNo || '').trim() !== selectedListNo.trim()) {
+        return false;
+      }
+
       const sc = searchTerm.toLowerCase();
       return item.plotNo.toLowerCase().includes(sc) ||
              item.farmerName.toLowerCase().includes(sc);
     });
-  }, [data, searchTerm]);
+  }, [data, searchTerm, selectedListNo]);
+
+  const uniqueListNos = useMemo(() => {
+    const lists = data
+      .map(item => item.listNo)
+      .filter(l => l && l.trim() !== '' && l !== '-' && l !== 'null');
+    const unique = Array.from(new Set(lists)).sort();
+    
+    if (!listSearchTerm) return unique;
+    
+    return unique.filter(l => l.toLowerCase().includes(listSearchTerm.toLowerCase()));
+  }, [data, listSearchTerm]);
 
   const lastBankedInfo = useMemo(() => {
     // Look for records that have an actual banked date (not pending/placeholder)
@@ -136,9 +176,11 @@ Banked Date: ${row.bankedDate}
         paddingBottom: '0.5rem',
         borderBottom: '1px solid var(--border)',
         flexWrap: 'wrap',
-        gap: '0.75rem'
-      }} className="animate-fade-in">
-        <div style={{ minWidth: '240px', flex: 1 }}>
+        gap: '0.75rem',
+        position: 'relative',
+        zIndex: 10000 // Ensure header stays on top of content
+      }} className="animate-fade-in page-header">
+        <div style={{ flex: 1, minWidth: '0' }}>
           <h1 style={{ 
             fontSize: '1.85rem', 
             fontWeight: 800, 
@@ -150,51 +192,160 @@ Banked Date: ${row.bankedDate}
           }}>
             Farmer Final Payment 2026-SC
           </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.2rem', overflow: 'hidden' }}>
             <span style={{ 
               background: 'rgba(99, 102, 241, 0.1)', 
               color: '#818cf8', 
-              fontSize: '0.7rem', 
+              fontSize: '0.6rem', 
               fontWeight: 700, 
-              padding: '0.2rem 0.6rem', 
+              padding: '0.15rem 0.5rem', 
               borderRadius: '6px',
-              border: '1px solid rgba(99, 102, 241, 0.2)'
+              border: '1px solid rgba(99, 102, 241, 0.2)',
+              whiteSpace: 'nowrap'
             }}>Zone Office</span>
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 500 }}>Field Officer Access Port</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Officer Access Port</span>
           </div>
         </div>
         
-        <button 
-          onClick={handleLogout} 
-          className="btn" 
-          style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.5rem 1rem' }}
-        >
-          Logout
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="dropdown">
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)} 
+              className="btn menu-btn" 
+              style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.3)', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+              Menu
+            </button>
+            
+            <div className={`dropdown-content ${isMenuOpen ? 'show' : ''}`}>
+              <div 
+                className="dropdown-item" 
+                onClick={() => setIsListExpanded(!isListExpanded)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                  List Wise
+                </div>
+                <span>{isListExpanded ? '▲' : '▼'}</span>
+              </div>
+              
+              {isListExpanded && (
+                <div className="dropdown-submenu custom-scrollbar">
+                  <div style={{ padding: '0.75rem 1rem', background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'sticky', top: 0, zIndex: 10 }}>
+                    <input 
+                      type="text"
+                      placeholder="Search list..."
+                      value={listSearchTerm}
+                      onChange={(e) => setListSearchTerm(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        width: '100%',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '6px',
+                        color: 'white',
+                        padding: '0.4rem 0.6rem',
+                        fontSize: '0.8rem',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+                  <div 
+                    className={`submenu-item ${selectedListNo === null ? 'active-filter' : ''}`}
+                    onClick={(e) => { 
+                      e.stopPropagation();
+                      setSelectedListNo(null); 
+                      setIsMenuOpen(false); 
+                      setListSearchTerm('');
+                    }}
+                  >
+                    All Payments
+                  </div>
+                  {uniqueListNos.map(list => (
+                    <div 
+                      key={list} 
+                      className={`submenu-item ${selectedListNo === list ? 'active-filter' : ''}`}
+                      onClick={(e) => { 
+                        e.stopPropagation();
+                        setSelectedListNo(list); 
+                        setIsMenuOpen(false); 
+                      }}
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between',
+                        padding: '1rem 1.5rem', // Larger tap area
+                        borderBottom: '1px solid rgba(255,255,255,0.05)'
+                      }}
+                    >
+                      <span style={{ color: 'white', fontWeight: 600 }}>{list}</span>
+                      {selectedListNo === list && (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="4"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div 
+                className="dropdown-item" 
+                onClick={() => { setShowAbout(true); setIsMenuOpen(false); }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                  About
+                </div>
+              </div>
+
+              <div 
+                className="dropdown-item" 
+                onClick={handleLogout}
+                style={{ color: '#f87171' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                  Logout
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </header>
     </div>
 
       {/* Main Content */}
       <main className="animate-fade-in" style={{ animationDelay: '0.1s', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '0 1rem 0.5rem 1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1rem', flexShrink: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Farmer Records</h2>
-            <div style={{ 
-              background: 'rgba(56, 189, 248, 0.1)', 
-              border: '1px solid rgba(56, 189, 248, 0.3)', 
-              color: '#7dd3fc', 
-              padding: '0.4rem 0.75rem', 
-              borderRadius: '9999px',
-              fontSize: '0.75rem',
-              fontWeight: 500,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem'
-            }}>
-              <span style={{ width: '6px', height: '6px', background: '#38bdf8', borderRadius: '50%', display: 'inline-block' }}></span>
-              Read-Only
+
+          {/* Active Filter Badge */}
+          {selectedListNo && (
+            <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ 
+                background: 'rgba(99, 102, 241, 0.25)', 
+                color: '#c7d2fe', 
+                fontSize: '0.8rem', 
+                fontWeight: 700, 
+                padding: '0.5rem 1rem', 
+                borderRadius: '10px',
+                border: '1px solid rgba(129, 140, 248, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)'
+              }}>
+                <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.8 }}>Listing:</span>
+                {selectedListNo}
+                <button 
+                  onClick={() => setSelectedListNo(null)}
+                  style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#818cf8', cursor: 'pointer', padding: '2px', borderRadius: '4px', display: 'flex' }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Last Banked Info Live Animation */}
           {lastBankedInfo && (
@@ -518,6 +669,51 @@ Banked Date: ${row.bankedDate}
           Click rows to expand details.
         </p>
       </footer>
+
+      {/* About Modal */}
+      {showAbout && (
+        <div className="modal-overlay" onClick={() => setShowAbout(false)}>
+          <div className="modal-content animate-fade-in" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, color: 'white' }}>About Portal</h3>
+              <button onClick={() => setShowAbout(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: '1.6' }}>
+              <p style={{ marginBottom: '1rem' }}>
+                This <strong>Farmer Final Payment Portal</strong> is designed to provide real-time access to payment details for field officers.
+              </p>
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span>Version</span>
+                  <span style={{ color: '#818cf8', fontWeight: 600 }}>v2.4.0-SC</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span>Last Update</span>
+                  <span style={{ color: '#34d399', fontWeight: 600 }}>2026 Season</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Access</span>
+                  <span style={{ color: '#fbbf24', fontWeight: 600 }}>Verified Only</span>
+                </div>
+              </div>
+              <p style={{ fontSize: '0.8rem', textAlign: 'center', opacity: 0.6 }}>
+                © 2026 Zone Office Information Systems
+              </p>
+            </div>
+            
+            <button 
+              className="btn btn-primary" 
+              style={{ width: '100%', marginTop: '1rem' }}
+              onClick={() => setShowAbout(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
