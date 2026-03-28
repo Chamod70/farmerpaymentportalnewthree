@@ -12,6 +12,29 @@
   --glass-border: rgba(255, 255, 255, 0.08);
 }
 
+[data-theme='light'] {
+  --bg: #ffffff;
+  --bg-card: #fdfdfd;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #eef2f6;
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: #e2e8f0;
+  --primary: #1e40af; /* Deep Royal Navy */
+  --primary-hover: #1d4ed8;
+}
+
+[data-theme='color'] {
+  --bg: #064e3b; /* Deep Dark Green / Forest */
+  --bg-card: rgba(255, 255, 255, 0.08);
+  --text-main: #ecfdf5;
+  --text-muted: #a7f3d0;
+  --border: rgba(167, 243, 208, 0.2);
+  --glass-bg: rgba(6, 78, 59, 0.8);
+  --glass-border: rgba(167, 243, 208, 0.3);
+  --primary: #10b981;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -23,11 +46,28 @@ body {
   background-color: var(--bg);
   color: var(--text-main);
   line-height: 1.5;
+  background-attachment: fixed;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body:not([data-theme]), body[data-theme='dark'] {
   background-image: 
     radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
     radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15), transparent 25%);
-  background-attachment: fixed;
-  min-height: 100vh;
+}
+
+body[data-theme='light'] {
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.03), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.03), transparent 25%);
+}
+
+body[data-theme='color'] {
+  background-image: 
+    linear-gradient(135deg, #064e3b 0%, #065f46 100%),
+    radial-gradient(circle at 15% 50%, rgba(52, 211, 153, 0.2), transparent 25%);
+  background-blend-mode: color-burn;
 }
 
 /* Glassmorphism utilities */
@@ -47,6 +87,11 @@ body {
   padding: 2rem;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme='light'] .glass-card {
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .glass-card:hover {
@@ -79,6 +124,12 @@ body {
   font-size: 1rem;
   transition: all 0.2s ease;
   outline: none;
+}
+
+[data-theme='light'] .input-field {
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
 }
 
 .input-field:focus {
@@ -481,7 +532,7 @@ body {
 }
 
 .dropdown-submenu {
-  max-height: 250px;
+  max-height: 450px;
   overflow-y: auto;
   background: #111827; /* Darker, clearly distinguished submenu background */
 }
@@ -508,9 +559,10 @@ body {
 
 @media (max-width: 640px) {
   .dropdown-content {
-    right: -10px;
-    width: calc(100vw - 40px);
-    max-width: 280px;
+    right: -15px;
+    width: 280px; /* Specific width that fits most mobile screens */
+    max-width: calc(100vw - 32px);
+    border-radius: 16px;
   }
 }
 
@@ -544,4 +596,81 @@ body {
 @keyframes modalIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* Dashboard Responsive Grids */
+.dashboard-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.dashboard-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .dashboard-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-value-large {
+    font-size: 1.4rem !important;
+  }
+  
+  .modal-content {
+    padding: 1rem !important;
+    max-height: 95vh;
+    overflow-y: auto;
+    width: 95vw !important;
+  }
+  
+  .dashboard-compact-gap {
+    gap: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+}
+
+.theme-switcher {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.theme-opt {
+  flex: 1;
+  padding: 0.35rem 0.1rem;
+  border-radius: 6px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+[data-theme='light'] .theme-switcher {
+  background: rgba(0, 0, 0, 0.05);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.theme-opt.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.theme-opt:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+[data-theme='light'] .theme-opt:not(.active) {
+  background: rgba(0, 0, 0, 0.05);
+  color: #64748b;
 }
