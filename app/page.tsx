@@ -276,7 +276,6 @@ Banked Date: ${row.bankedDate}
           <div style={{ flex: 1, minWidth: '0' }}>
             <h1 style={{
               fontSize: '1.85rem',
-              fontWeight: 800,
               margin: 0,
               background: 'linear-gradient(to right, var(--text-main), var(--text-muted))',
               WebkitBackgroundClip: 'text',
