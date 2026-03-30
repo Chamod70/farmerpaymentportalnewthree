@@ -11,8 +11,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: 'Title and Message are required' }, { status: 400 });
   }
 
-  const appId = process.env.ONESIGNAL_APP_ID || "cd58321e-12f6-4a62-8301-cc049ece1b1a";
-  const restApiKey = process.env.ONESIGNAL_REST_API_KEY || "os_v2_app_zvmdehqs6zfgfaybzqcj5tq3dkyjtlmiydqenhnbyw33knd2c3gy25elpgwi6f7aam2r7d3pgayo5rectmhddfg3vn64cpsv4gatsty";
+  const appId = process.env.ONESIGNAL_APP_ID;
+  const restApiKey = process.env.ONESIGNAL_REST_API_KEY;
+
+  if (!appId || !restApiKey) {
+    return NextResponse.json({ success: false, error: 'OneSignal credentials are not configured in environment variables' }, { status: 500 });
+  }
 
   const data = {
     app_id: appId,

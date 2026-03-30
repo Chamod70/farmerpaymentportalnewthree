@@ -2,14 +2,20 @@
 
 import { useEffect } from 'react';
 
-// Using your specific OneSignal App ID
-const ONESIGNAL_APP_ID = "cd58321e-12f6-4a62-8301-cc049ece1b1a";
+// Using environment variable for OneSignal App ID
+const ONESIGNAL_APP_ID = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
 
 export default function PushNotificationManager() {
   useEffect(() => {
     // 1. Initialize OneSignal using the latest OneSignalDeferred pattern
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     
+    // Check for App ID
+    if (!ONESIGNAL_APP_ID) {
+      console.warn("OneSignal App ID not found. Web Push is disabled.");
+      return;
+    }
+
     // Check if script already exists to avoid duplication
     if (document.getElementById('onesignal-sdk')) return;
 
