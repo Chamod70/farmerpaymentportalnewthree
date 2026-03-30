@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'Authorization': `Basic ${restApiKey}`
+        'Authorization': `Key ${restApiKey}`
       },
       body: JSON.stringify(data)
     });
