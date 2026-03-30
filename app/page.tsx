@@ -28,6 +28,9 @@ export default function Home() {
   const [listSearchTerm, setListSearchTerm] = useState('');
   const [showDashboard, setShowDashboard] = useState(false);
   const [theme, setTheme] = useState('dark');
+  const [notifTitle, setNotifTitle] = useState('Payment Update');
+  const [notifMessage, setNotifMessage] = useState('A new payment list has been uploaded.');
+  const [sendingNotif, setSendingNotif, ] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -90,6 +93,31 @@ export default function Home() {
     await fetch('/api/logout', { method: 'POST' });
     router.push('/login');
     router.refresh();
+  };
+
+  const sendNotification = async () => {
+    setSendingNotif(true);
+    try {
+      const res = await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: notifTitle,
+          message: notifMessage,
+          url: '/'
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Notification sent successfully!');
+      } else {
+        alert('Failed to send: ' + JSON.stringify(data.error));
+      }
+    } catch (err) {
+      alert('Error sending notification');
+    } finally {
+      setSendingNotif(false);
+    }
   };
 
   const formatBalance = (amount: string) => {
@@ -922,6 +950,44 @@ Banked Date: ${row.bankedDate}
                   <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
                   <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{stats.pendingCount} Pending</span>
                 </div>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1rem', marginBottom: '1.2rem' }}>
+              <div style={{ fontSize: '0.75rem', color: '#818cf8', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                Send Push Notification
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                <input 
+                  type="text" 
+                  placeholder="Notification Title" 
+                  value={notifTitle}
+                  onChange={(e) => setNotifTitle(e.target.value)}
+                  style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '0.5rem', color: 'white', fontSize: '0.85rem' }}
+                />
+                <textarea 
+                  placeholder="Message content..." 
+                  value={notifMessage}
+                  onChange={(e) => setNotifMessage(e.target.value)}
+                  style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '0.5rem', color: 'white', fontSize: '0.85rem', minHeight: '60px', resize: 'none' }}
+                ></textarea>
+                <button 
+                  onClick={sendNotification}
+                  disabled={sendingNotif}
+                  style={{ 
+                    background: sendingNotif ? 'rgba(99, 102, 241, 0.5)' : '#6366f1', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    padding: '0.6rem', 
+                    fontWeight: 700, 
+                    cursor: sendingNotif ? 'not-allowed' : 'pointer',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  {sendingNotif ? 'Sending...' : 'Broadcast to All Users'}
+                </button>
               </div>
             </div>
 

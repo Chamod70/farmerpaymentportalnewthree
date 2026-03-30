@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import PushNotificationManager from '@/components/PushNotificationManager';
 
 export const metadata: Metadata = {
   title: 'FARMER FINAL PAYMENT 2026-SC',
@@ -15,8 +16,12 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        {/* Next.js doesn't natively handle SW registration easily via head without extra logic, but OneSignal SDK handles it automatically. */}
       </head>
-      <body>{children}</body>
+      <body>
+        <PushNotificationManager />
+        {children}
+      </body>
     </html>
   );
 }
