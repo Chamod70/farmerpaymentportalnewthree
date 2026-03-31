@@ -252,20 +252,23 @@ Banked Date: ${row.bankedDate}
       const isRTGS = listNo.startsWith('RTGS');
       const isCheque = listNo === 'CHEQUE' || bankedDateRaw === 'CHEQUE';
       const isNill = listNo === 'NILL' || bankedDateRaw === 'MINUS' || bankedDateRaw === 'NILL';
+      const isPending = bankedDateRaw === 'PENDING' || bankedDateRaw === '' || bankedDateRaw === '-';
       
       // Update method counts
       if (isRTGS) rtgsCount++;
       else if (isCheque) chequeCount++;
       else if (isNill) nillCount++;
 
-      // 3. Paid vs Pending for Progress Bar (Banked = RTGS + Cheque)
-      if (isRTGS || isCheque) {
-        paidCount++;
-        if (!isNaN(val)) paidBalance += val;
-      } else if (!isNill) {
-        // Anything else that isn't Nill is considered Pending (e.g. status PENDING)
+      // 3. Paid vs Pending for Progress Bar
+      if (isNill) {
+        // Exclude Nill from Paid/Pending metrics
+      } else if (isPending) {
         pendingCount++;
         if (!isNaN(val)) pendingBalance += val;
+      } else {
+        // If not Nill and not Pending, it's considered Paid/Complete
+        paidCount++;
+        if (!isNaN(val)) paidBalance += val;
       }
     });
 
