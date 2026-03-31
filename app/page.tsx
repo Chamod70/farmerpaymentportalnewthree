@@ -30,7 +30,7 @@ export default function Home() {
   const [theme, setTheme] = useState('dark');
   const [notifTitle, setNotifTitle] = useState('Payment Update');
   const [notifMessage, setNotifMessage] = useState('A new payment list has been uploaded.');
-  const [sendingNotif, setSendingNotif, ] = useState(false);
+  const [sendingNotif, setSendingNotif] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
