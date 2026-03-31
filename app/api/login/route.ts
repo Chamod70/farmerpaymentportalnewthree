@@ -11,16 +11,17 @@ const VALID_USERS = {
 export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
-    const secretPassword = process.env.ADMIN_PASSWORD || 'zone123';
+    const userPassword = VALID_USERS[username as keyof typeof VALID_USERS];
 
-    if (username === 'admin' && password === secretPassword) {
-      const response = NextResponse.json({ success: true });
+    if (userPassword && password === userPassword) {
+      const response = NextResponse.json({ success: true, username });
       response.cookies.set({
         name: 'auth_token',
         value: 'authenticated_' + username,
         httpOnly: true,
         path: '/',
         secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7 // 1 week
       });
       return response;

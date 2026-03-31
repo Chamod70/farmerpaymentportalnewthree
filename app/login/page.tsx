@@ -23,6 +23,8 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('ffp-username', data.username);
         router.push('/');
         router.refresh(); // To force middleware run
       } else {

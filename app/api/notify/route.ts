@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 /**
  * API route to send push notifications to all users via OneSignal.
  * Requires ONESIGNAL_APP_ID and ONESIGNAL_REST_API_KEY in environment variables.
  */
 export async function POST(request: Request) {
+  // Security Check: Only admin can send notifications
+  const cookieStore = await cookies();
+  const token = cookieStore.get('auth_token')?.value;
+  
+  if (token !== 'authenticated_admin') {
+    return NextResponse.json({ success: false, error: 'Unauthorized: Admin access required' }, { status: 403 });
+  }
+
   const { title, message, url } = await request.json();
 
   if (!title || !message) {

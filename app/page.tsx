@@ -31,6 +31,7 @@ export default function Home() {
   const [notifTitle, setNotifTitle] = useState('Payment Update');
   const [notifMessage, setNotifMessage] = useState('A new payment list has been uploaded.');
   const [sendingNotif, setSendingNotif] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -61,6 +62,10 @@ export default function Home() {
     const savedTheme = localStorage.getItem('ffp-theme') || 'dark';
     setTheme(savedTheme);
     document.body.setAttribute('data-theme', savedTheme);
+    
+    // Check user role from localStorage
+    const savedRole = localStorage.getItem('ffp-username');
+    setUserRole(savedRole);
   }, []);
 
   const changeTheme = (newTheme: string) => {
@@ -340,15 +345,17 @@ Banked Date: ${row.bankedDate}
               </button>
 
               <div className={`dropdown-content ${isMenuOpen ? 'show' : ''}`}>
-                <div
-                  className="dropdown-item"
-                  onClick={() => { setShowDashboard(true); setIsMenuOpen(false); }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    Dashboard
+                {userRole === 'admin' && (
+                  <div
+                    className="dropdown-item"
+                    onClick={() => { setShowDashboard(true); setIsMenuOpen(false); }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                      Dashboard
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div
                   className="dropdown-item"
@@ -953,43 +960,45 @@ Banked Date: ${row.bankedDate}
               </div>
             </div>
 
-            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1rem', marginBottom: '1.2rem' }}>
-              <div style={{ fontSize: '0.75rem', color: '#818cf8', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                Send Push Notification
+            {userRole === 'admin' && (
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1rem', marginBottom: '1.2rem' }}>
+                <div style={{ fontSize: '0.75rem', color: '#818cf8', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                  Send Push Notification
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Notification Title" 
+                    value={notifTitle}
+                    onChange={(e) => setNotifTitle(e.target.value)}
+                    style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '0.5rem', color: 'white', fontSize: '0.85rem' }}
+                  />
+                  <textarea 
+                    placeholder="Message content..." 
+                    value={notifMessage}
+                    onChange={(e) => setNotifMessage(e.target.value)}
+                    style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '0.5rem', color: 'white', fontSize: '0.85rem', minHeight: '60px', resize: 'none' }}
+                  ></textarea>
+                  <button 
+                    onClick={sendNotification}
+                    disabled={sendingNotif}
+                    style={{ 
+                      background: sendingNotif ? 'rgba(99, 102, 241, 0.5)' : '#6366f1', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '8px', 
+                      padding: '0.6rem', 
+                      fontWeight: 700, 
+                      cursor: sendingNotif ? 'not-allowed' : 'pointer',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    {sendingNotif ? 'Sending...' : 'Broadcast to All Users'}
+                  </button>
+                </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                <input 
-                  type="text" 
-                  placeholder="Notification Title" 
-                  value={notifTitle}
-                  onChange={(e) => setNotifTitle(e.target.value)}
-                  style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '0.5rem', color: 'white', fontSize: '0.85rem' }}
-                />
-                <textarea 
-                  placeholder="Message content..." 
-                  value={notifMessage}
-                  onChange={(e) => setNotifMessage(e.target.value)}
-                  style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '0.5rem', color: 'white', fontSize: '0.85rem', minHeight: '60px', resize: 'none' }}
-                ></textarea>
-                <button 
-                  onClick={sendNotification}
-                  disabled={sendingNotif}
-                  style={{ 
-                    background: sendingNotif ? 'rgba(99, 102, 241, 0.5)' : '#6366f1', 
-                    color: 'white', 
-                    border: 'none', 
-                    borderRadius: '8px', 
-                    padding: '0.6rem', 
-                    fontWeight: 700, 
-                    cursor: sendingNotif ? 'not-allowed' : 'pointer',
-                    fontSize: '0.85rem'
-                  }}
-                >
-                  {sendingNotif ? 'Sending...' : 'Broadcast to All Users'}
-                </button>
-              </div>
-            </div>
+            )}
 
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic', marginBottom: '1rem' }}>
               * Stats are calculated based on the current season data.
