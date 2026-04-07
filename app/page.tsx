@@ -64,7 +64,7 @@ export default function Home() {
     document.body.setAttribute('data-theme', savedTheme);
     
     // Check user role from localStorage
-    const savedRole = localStorage.getItem('ffp-username');
+    const savedRole = localStorage.getItem('ffp-role');
     setUserRole(savedRole);
   }, []);
 
