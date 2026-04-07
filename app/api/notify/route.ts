@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const cookieStore = await cookies();
   const token = cookieStore.get('auth_token')?.value;
   
-  if (token !== 'authenticated_admin') {
+  if (!token || !token.endsWith('_admin')) {
     return NextResponse.json({ success: false, error: 'Unauthorized: Admin access required' }, { status: 403 });
   }
 
