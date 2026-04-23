@@ -36,8 +36,8 @@ export async function GET() {
     // K (index 10): STATUS
     // F (index 5): AMOUNT
     
-    // Skip header row
-    const dataRows = rows.slice(1);
+    // Skip header row and filter out empty Plot Numbers
+    const dataRows = rows.slice(1).filter((row: any) => row[1] && row[1].toString().trim() !== '');
     
     const formattedData = dataRows.map((row: any) => ({
       plotNo: row[1] || '-',
