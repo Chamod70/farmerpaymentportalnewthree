@@ -17,29 +17,40 @@ export async function GET() {
     
     const csvData = await response.text();
     
-    // Parse CSV to JSON
+    // Parse without headers to be safer with column positions
     const parsed = Papa.parse(csvData, {
-      header: true,      // Using headers because they might be in different positions
+      header: false,
       skipEmptyLines: true,
     });
     
     const rows = parsed.data as any[];
 
-    if (!rows || rows.length === 0) {
+    if (!rows || rows.length <= 1) {
       return NextResponse.json({ success: true, data: [] });
     }
     
-    // Normalize headers based on subagent findings:
-    // BANK ACC. NO, BANK COAD
-    const formattedData = rows.map((row: any) => ({
-      plotNo: row['PLOT NO'] || '-',
-      farmerName: row['FARMER NAME'] || '-',
-      idNo: row['ID NO'] || '-',
-      balanceAmount: row['BALANCE AMOUNT'] || '-',
-      listNo: row['LIST NO'] || '-',
-      bankedDate: row['BANKED DATE'] || '-',
-      bankAccNo: row['BANK ACC. NO'] || row['BANK ACC NO'] || '-',
-      bankCode: row['BANK COAD'] || row['BANK CODE'] || '-',
+    // User mentioned:
+    // A (0): PLOT NO
+    // B (1): FARMER NAME
+    // C (2): ID NO
+    // D (3): BALANCE AMOUNT
+    // E (4): LIST NO
+    // F (5): BANKED DATE
+    // G (6): BANK ACC. NO
+    // H (7): BANK COAD
+    
+    // Skip header row
+    const dataRows = rows.slice(1);
+
+    const formattedData = dataRows.map((row: any) => ({
+      plotNo: row[0] || '-',
+      farmerName: row[1] || '-',
+      idNo: row[2] || '-',
+      balanceAmount: row[3] || '-',
+      listNo: row[4] || '-',
+      bankedDate: row[5] || '-',
+      bankAccNo: row[6] || '-',
+      bankCode: row[7] || '-',
     }));
 
     return NextResponse.json({ success: true, data: formattedData });
