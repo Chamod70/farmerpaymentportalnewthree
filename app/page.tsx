@@ -14,6 +14,14 @@ interface FarmerData {
   bankCode: string;
 }
 
+interface FinanceData {
+  plotNo: string;
+  farmerName: string;
+  dateReceived: string;
+  status: string;
+  amount: string;
+}
+
 export default function Home() {
   const [data, setData] = useState<FarmerData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +40,9 @@ export default function Home() {
   const [notifMessage, setNotifMessage] = useState('A new payment list has been uploaded.');
   const [sendingNotif, setSendingNotif] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [showFinance, setShowFinance] = useState(false);
+  const [financeData, setFinanceData] = useState<FinanceData[]>([]);
+  const [loadingFinance, setLoadingFinance] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -98,6 +109,23 @@ export default function Home() {
     await fetch('/api/logout', { method: 'POST' });
     router.push('/login');
     router.refresh();
+  };
+
+  const fetchFinanceData = async () => {
+    setLoadingFinance(true);
+    try {
+      const res = await fetch('/api/finance');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success) {
+          setFinanceData(json.data);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching finance data:', err);
+    } finally {
+      setLoadingFinance(false);
+    }
   };
 
   const sendNotification = async () => {
@@ -429,6 +457,16 @@ Banked Date: ${row.bankedDate}
                     ))}
                   </div>
                 )}
+
+                <div
+                  className="dropdown-item"
+                  onClick={() => { setShowFinance(true); setIsMenuOpen(false); fetchFinanceData(); }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                    Finance Received
+                  </div>
+                </div>
 
                 <div
                   className="dropdown-item"
@@ -1011,6 +1049,77 @@ Banked Date: ${row.bankedDate}
               className="btn btn-primary"
               style={{ width: '100%', borderRadius: '12px' }}
               onClick={() => setShowDashboard(false)}
+            >
+              Back to Portal
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Finance Received Modal */}
+      {showFinance && (
+        <div className="modal-overlay" onClick={() => setShowFinance(false)}>
+          <div className="modal-content animate-fade-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '800px', padding: '1.5rem', width: '95%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ background: 'rgba(16, 185, 129, 0.2)', padding: '8px', borderRadius: '10px' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                </div>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0, color: 'white' }}>Finance Received</h3>
+              </div>
+              <button onClick={() => setShowFinance(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+
+            <div style={{ overflowX: 'auto', maxHeight: '60vh', marginBottom: '1.5rem' }} className="custom-scrollbar">
+              {loadingFinance ? (
+                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Loading finance records...</div>
+              ) : financeData.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No records found.</div>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                  <thead style={{ position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 1 }}>
+                    <tr style={{ borderBottom: '2px solid var(--border)' }}>
+                      <th style={{ textAlign: 'left', padding: '0.75rem' }}>Plot No</th>
+                      <th style={{ textAlign: 'left', padding: '0.75rem' }}>Farmer Name</th>
+                      <th style={{ textAlign: 'left', padding: '0.75rem' }}>Date Received</th>
+                      <th style={{ textAlign: 'left', padding: '0.75rem' }}>Status</th>
+                      <th style={{ textAlign: 'right', padding: '0.75rem' }}>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {financeData.map((row, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid var(--border)' }}>
+                        <td style={{ padding: '0.75rem', color: '#818cf8', fontWeight: 600 }}>{row.plotNo}</td>
+                        <td style={{ padding: '0.75rem', color: 'white' }}>{row.farmerName}</td>
+                        <td style={{ padding: '0.75rem', color: 'var(--text-muted)' }}>{row.dateReceived}</td>
+                        <td style={{ padding: '0.75rem' }}>
+                          <span style={{ 
+                            background: row.status.toLowerCase().includes('complete') ? 'rgba(16, 185, 129, 0.1)' : 'rgba(251, 191, 36, 0.1)',
+                            color: row.status.toLowerCase().includes('complete') ? '#34d399' : '#fbbf24',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '0.7rem',
+                            fontWeight: 700
+                          }}>
+                            {row.status}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.75rem', textAlign: 'right', color: '#34d399', fontWeight: 700 }}>
+                          Rs. {formatBalance(row.amount)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            <button
+              className="btn btn-primary"
+              style={{ width: '100%', borderRadius: '12px' }}
+              onClick={() => setShowFinance(false)}
             >
               Back to Portal
             </button>
