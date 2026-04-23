@@ -44,6 +44,8 @@ export default function Home() {
   const [financeData, setFinanceData] = useState<FinanceData[]>([]);
   const [loadingFinance, setLoadingFinance] = useState(false);
   const [financeSearchTerm, setFinanceSearchTerm] = useState('');
+  const [currentCampaign, setCurrentCampaign] = useState('Current Season');
+  const [isCampaignExpanded, setIsCampaignExpanded] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -86,9 +88,12 @@ export default function Home() {
     localStorage.setItem('ffp-theme', newTheme);
   };
 
-  const fetchData = async () => {
+  const fetchData = async (campaign = 'current') => {
+    setLoading(true);
+    setError('');
     try {
-      const res = await fetch('/api/data');
+      const endpoint = campaign === 'current' ? '/api/data' : `/api/data/old/${campaign}`;
+      const res = await fetch(endpoint);
       if (res.ok) {
         const json = await res.json();
         if (json.success) {
@@ -104,6 +109,13 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCampaignChange = (campaignId: string, campaignName: string) => {
+    setCurrentCampaign(campaignName);
+    setIsCampaignExpanded(false);
+    setIsMenuOpen(false);
+    fetchData(campaignId);
   };
 
   const handleLogout = async () => {
@@ -357,7 +369,7 @@ Banked Date: ${row.bankedDate}
               letterSpacing: '-0.02em',
               fontWeight: 900
             }}>
-              Farmer Final Payment 2026-SC
+              FFP {currentCampaign}
             </h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.2rem', overflow: 'hidden' }}>
               <span style={{
@@ -465,6 +477,41 @@ Banked Date: ${row.bankedDate}
                         )}
                       </div>
                     ))}
+                  </div>
+                )}
+
+                <div
+                  className="dropdown-item"
+                  onClick={() => setIsCampaignExpanded(!isCampaignExpanded)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                    Old Campaign
+                  </div>
+                  <span>{isCampaignExpanded ? '▲' : '▼'}</span>
+                </div>
+
+                {isCampaignExpanded && (
+                  <div className="dropdown-submenu">
+                    <div
+                      className={`submenu-item ${currentCampaign === 'Current Season' ? 'active-filter' : ''}`}
+                      onClick={() => handleCampaignChange('current', 'Current Season')}
+                    >
+                      Current Season
+                    </div>
+                    <div
+                      className={`submenu-item ${currentCampaign === '2026-SHORT' ? 'active-filter' : ''}`}
+                      onClick={() => handleCampaignChange('2026-short', '2026-SHORT')}
+                    >
+                      2026-SHORT
+                    </div>
+                    <div
+                      className={`submenu-item ${currentCampaign === '2026-LONG' ? 'active-filter' : ''}`}
+                      onClick={() => alert('Data for 2026-LONG is not yet available.')}
+                    >
+                      2026-LONG
+                    </div>
                   </div>
                 )}
 
