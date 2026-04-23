@@ -43,6 +43,7 @@ export default function Home() {
   const [showFinance, setShowFinance] = useState(false);
   const [financeData, setFinanceData] = useState<FinanceData[]>([]);
   const [loadingFinance, setLoadingFinance] = useState(false);
+  const [financeSearchTerm, setFinanceSearchTerm] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -214,6 +215,15 @@ Banked Date: ${row.bankedDate}
 
     return unique.filter(l => l.toLowerCase().includes(listSearchTerm.toLowerCase()));
   }, [data, listSearchTerm]);
+
+  const filteredFinanceData = useMemo(() => {
+    if (!financeSearchTerm) return financeData;
+    const sc = financeSearchTerm.toLowerCase();
+    return financeData.filter(item =>
+      (item.plotNo || '').toLowerCase().includes(sc) ||
+      (item.farmerName || '').toLowerCase().includes(sc)
+    );
+  }, [financeData, financeSearchTerm]);
 
   const lastBankedInfo = useMemo(() => {
     // Look for records that have an actual banked date (not pending/placeholder)
@@ -1072,6 +1082,41 @@ Banked Date: ${row.bankedDate}
               </button>
             </div>
 
+            {/* Finance Search Bar */}
+            <div style={{ marginBottom: '1rem' }}>
+              <div style={{
+                background: 'rgba(0,0,0,0.2)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 0.75rem'
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input
+                  type="text"
+                  placeholder="Search by Plot No or Name..."
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'white',
+                    padding: '0.6rem 0.5rem',
+                    width: '100%',
+                    fontSize: '0.9rem',
+                    outline: 'none'
+                  }}
+                  value={financeSearchTerm}
+                  onChange={(e) => setFinanceSearchTerm(e.target.value)}
+                />
+                {financeSearchTerm && (
+                  <button 
+                    onClick={() => setFinanceSearchTerm('')}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                  >✕</button>
+                )}
+              </div>
+            </div>
+
             <div style={{ overflowX: 'auto', maxHeight: '60vh', marginBottom: '1.5rem' }} className="custom-scrollbar">
               {loadingFinance ? (
                 <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Loading finance records...</div>
@@ -1089,7 +1134,7 @@ Banked Date: ${row.bankedDate}
                     </tr>
                   </thead>
                   <tbody>
-                    {financeData.map((row, idx) => (
+                    {filteredFinanceData.map((row, idx) => (
                       <tr key={idx} style={{ borderBottom: '1px solid var(--border)' }}>
                         <td style={{ padding: '0.75rem', color: '#818cf8', fontWeight: 600 }}>{row.plotNo}</td>
                         <td style={{ padding: '0.75rem', color: 'white' }}>{row.farmerName}</td>
